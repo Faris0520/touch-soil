@@ -18,14 +18,14 @@ export interface ClimateZone {
 
 /**
  * A deliberately small, illustrative dataset. The point of the app is that the
- * climate "facts" are plain data anyone can read, fork, and correct — not a
+ * climate "facts" are plain data anyone can read, fork, and correct, not a
  * proprietary black box. Frost months follow rough USDA-zone conventions;
  * tropical seasons follow monsoon patterns around the equator.
  */
 export const ZONES: ClimateZone[] = [
   {
     id: 'z34',
-    label: 'Very cold — USDA zones 3–4',
+    label: 'Very cold (USDA zones 3–4)',
     kind: 'temperate',
     exampleRegions: 'Interior Canada, Alaska, northern Scandinavia',
     lastFrost: 'late May',
@@ -34,7 +34,7 @@ export const ZONES: ClimateZone[] = [
   },
   {
     id: 'z56',
-    label: 'Cold — USDA zones 5–6',
+    label: 'Cold (USDA zones 5–6)',
     kind: 'temperate',
     exampleRegions: 'US Midwest, central Europe, Poland, UK inland',
     lastFrost: 'mid May',
@@ -43,7 +43,7 @@ export const ZONES: ClimateZone[] = [
   },
   {
     id: 'z78',
-    label: 'Temperate — USDA zones 7–8',
+    label: 'Temperate (USDA zones 7–8)',
     kind: 'temperate',
     exampleRegions: 'US Mid-Atlantic, southern Europe inland, southern England',
     lastFrost: 'mid April',
@@ -52,7 +52,7 @@ export const ZONES: ClimateZone[] = [
   },
   {
     id: 'z910',
-    label: 'Mild — USDA zones 9–10',
+    label: 'Mild (USDA zones 9–10)',
     kind: 'temperate',
     exampleRegions: 'Mediterranean coast, northern California, southern Australia',
     lastFrost: 'late February',
@@ -61,12 +61,12 @@ export const ZONES: ClimateZone[] = [
   },
   {
     id: 'z11',
-    label: 'Frost-free subtropical — zone 11+',
+    label: 'Frost-free subtropical (zone 11+)',
     kind: 'tropical',
     exampleRegions: 'South Florida, coastal Peru, parts of coastal Australia',
     wetSeason: 'June to October (varies)',
     drySeason: 'November to May (varies)',
-    notes: 'No frost — heat and rain set the calendar instead.',
+    notes: 'No frost: heat and rain set the calendar instead.',
   },
   {
     id: 'trop-low',
@@ -84,7 +84,7 @@ export const ZONES: ClimateZone[] = [
     exampleRegions: 'Bandung, Bogotá, Nairobi, Addis Ababa',
     wetSeason: 'November to March',
     drySeason: 'April to October',
-    notes: 'Cool nights, no frost — good for greens year-round.',
+    notes: 'Cool nights, no frost: good for greens year-round.',
   },
   {
     id: 'arid',

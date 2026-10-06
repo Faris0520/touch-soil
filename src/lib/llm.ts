@@ -37,7 +37,27 @@ export function hasWebGPU(): boolean {
 }
 
 async function createEngine(modelId: string, onProgress: Progress) {
+  // gemma3 prebuilt records ship both context_window_size (override) and
+  // sliding_window_size (base config); the engine refuses to run with both
+  // positive. Switching the record to sliding-window mode fixes it, per the
+  // engine's own guidance, and lets the sequence exceed the 512-token window.
+  const appConfig: webllm.AppConfig = {
+    ...webllm.prebuiltAppConfig,
+    model_list: webllm.prebuiltAppConfig.model_list.map((rec) =>
+      rec.model_id === modelId
+        ? {
+            ...rec,
+            overrides: {
+              ...rec.overrides,
+              context_window_size: -1,
+              attention_sink_size: 0,
+            },
+          }
+        : rec,
+    ),
+  }
   return webllm.CreateMLCEngine(modelId, {
+    appConfig,
     initProgressCallback: (report) => onProgress(report.text, report.progress),
   })
 }
@@ -58,12 +78,22 @@ export interface ChatTurn {
   content: string
 }
 
-export async function complete(engine: Engine, messages: ChatTurn[]) {
+export interface PlanFormat {
+  type: 'json_object'
+  schema: string
+}
+
+export async function complete(
+  engine: Engine,
+  messages: ChatTurn[],
+  responseFormat?: PlanFormat,
+) {
   const res = await engine.chat.completions.create({
     messages,
     temperature: 0.6,
     top_p: 0.9,
     max_tokens: 700,
+    ...(responseFormat ? { response_format: responseFormat } : {}),
   })
   return res.choices[0]?.message?.content ?? ''
 }

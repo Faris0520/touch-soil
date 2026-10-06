@@ -1,15 +1,74 @@
 import { zoneFacts, type ClimateZone } from '../data/climates'
-import type { ChatTurn } from './llm'
+import type { ChatTurn, PlanFormat } from './llm'
 
 const SYSTEM_PROMPT = [
-  'You are an experienced local gardener writing a short weekly plan for one home garden.',
-  'Use ONLY the climate facts given; do not invent weather or dates beyond them.',
-  'Answer in compact markdown with exactly these three sections:',
-  '## Plant now (3 to 5 bullets, each "Crop. One line on why now and how to start.")',
-  '## This week\u2019s task (one bullet, the single most useful job this week)',
-  '## Skip for now (one bullet, something tempting but wrong this week)',
-  'Under 200 words total. Specific crop names, no emoji, no greetings, no closing line.',
+  'You are an expert local gardener.',
+  'Given today\u2019s date, the garden\u2019s climate facts, and what is already growing,',
+  'output JSON with: plants (3 to 5 items, each with name and why, where why is one',
+  'short sentence on why this crop suits this week and how to start it), task (the',
+  'single most useful job in the garden this week), and skip (one tempting job that',
+  'is wrong to do this week). Use only the climate facts given. Real crop names,',
+  'short sentences, no extra text.',
 ].join(' ')
+
+/** Grammar-constrained output: the model cannot emit anything but this shape. */
+export const PLAN_FORMAT: PlanFormat = {
+  type: 'json_object',
+  schema: JSON.stringify({
+    type: 'object',
+    properties: {
+      plants: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            why: { type: 'string' },
+          },
+          required: ['name', 'why'],
+        },
+      },
+      task: { type: 'string' },
+      skip: { type: 'string' },
+    },
+    required: ['plants', 'task', 'skip'],
+  }),
+}
+
+export interface WeeklyPlan {
+  plants: { name: string; why: string }[]
+  task: string
+  skip: string
+}
+
+export function parsePlan(raw: string): WeeklyPlan {
+  const trimmed = raw.trim().replace(/^```(?:json)?\s*|\s*```$/g, '')
+  const plan = JSON.parse(trimmed) as WeeklyPlan
+  if (!Array.isArray(plan.plants) || plan.plants.length === 0) {
+    throw new Error('malformed plan')
+  }
+  return {
+    plants: plan.plants
+      .filter((p) => p && typeof p.name === 'string')
+      .slice(0, 5),
+    task: String(plan.task ?? ''),
+    skip: String(plan.skip ?? ''),
+  }
+}
+
+export function planToMarkdown(plan: WeeklyPlan): string {
+  const bullets = plan.plants.map((p) => `- **${p.name}.** ${p.why}`)
+  return [
+    '## Plant now',
+    ...bullets,
+    '',
+    '## This week\u2019s task',
+    `- ${plan.task}`,
+    '',
+    '## Skip for now',
+    `- ${plan.skip}`,
+  ].join('\n')
+}
 
 export function buildMessages(
   zone: ClimateZone,
@@ -23,13 +82,13 @@ export function buildMessages(
     year: 'numeric',
   })
   const growing = alreadyGrowing.trim()
-    ? ` Already growing here: ${alreadyGrowing.trim()}. Include one care note for one of these.`
+    ? ` Already growing here: ${alreadyGrowing.trim()}. Weave one care job for one of these into the task.`
     : ''
   return [
     { role: 'system', content: SYSTEM_PROMPT },
     {
       role: 'user',
-      content: `Today is ${today}. My garden's climate: ${zoneFacts(zone)}${growing} What should I plant or do in my garden this week?`,
+      content: `Today is ${today}. My garden's climate: ${zoneFacts(zone)}${growing} What should I plant this week? Answer with the JSON only.`,
     },
   ]
 }

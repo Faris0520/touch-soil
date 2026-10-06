@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import { ZONES, zoneById } from './data/climates'
-import { buildMessages, fallbackPlan } from './lib/planner'
+import {
+  PLAN_FORMAT,
+  buildMessages,
+  fallbackPlan,
+  parsePlan,
+  planToMarkdown,
+} from './lib/planner'
 import { complete, getEngine, hasWebGPU, listGemmaModels } from './lib/llm'
 import { renderMarkdown } from './lib/markdown'
 
@@ -68,12 +74,27 @@ export default function App() {
         setFraction(frac)
       })
       setPhase('generating')
-      const answer = await complete(engine, buildMessages(zoneById(zoneId), growing, new Date()))
-      if (!answer.trim()) throw new Error('the model returned an empty answer')
-      setOutput(answer)
+      const answer = await complete(
+        engine,
+        buildMessages(zoneById(zoneId), growing, new Date()),
+        PLAN_FORMAT,
+      )
+      const plan = parsePlan(answer)
+      setOutput(planToMarkdown(plan))
       setPhase('done')
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : String(err))
+      const msg =
+        err instanceof Error
+          ? err.message
+          : typeof err === 'object' && err !== null
+            ? JSON.stringify(err)
+            : String(err)
+      const crashed = /ExitStatus|terminated/i.test(msg)
+      setErrorMsg(
+        crashed
+          ? 'The AI runtime crashed on this GPU setup. Reload the page and try again; the model is already cached, so it will load fast. The offline guide below always works.'
+          : msg || 'unknown error',
+      )
       setPhase('error')
     }
   }
