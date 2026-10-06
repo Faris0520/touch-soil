@@ -12,10 +12,14 @@ Built for the [Hacktoberfest Open-Source AI Challenge](https://dev.to/challenges
 
 ## How it works
 
-1. `src/data/climates.ts`: a small, honest climate dataset (USDA-style frost zones plus tropical monsoon zones, highland, arid, Mediterranean).
-2. `src/lib/planner.ts`: builds a tight prompt from your zone + today's date. If WebGPU is missing, a deterministic rule-based guide takes over so the app is never empty.
-3. `src/lib/llm.ts`: loads the smallest prebuilt Gemma model from WebLLM's list, caches it in the browser, and runs the completion on your GPU.
-4. The result is rendered from markdown (never injected as HTML).
+1. **Engine picker.** Two ways to run the same open-weight Gemma model, chosen in the UI:
+   - **In this browser** (WebLLM/WebGPU): downloads the weights once into the browser cache, then runs fully offline on your GPU. A confirmation panel asks before the first download.
+   - **Ollama on this machine**: detects Gemma models already pulled on your computer via Ollama's `/api/tags` and talks to the local server. It never downloads anything; if no Gemma is installed it just tells you the command. Also works in browsers without WebGPU. A confirmation panel asks before your garden details are sent to the local server.
+2. `src/data/climates.ts`: a small, honest climate dataset (USDA-style frost zones plus tropical monsoon zones, highland, arid, Mediterranean).
+3. `src/lib/planner.ts`: builds a tight prompt from your zone + today's date, plus the JSON schema both engines must emit. If neither engine is available, a deterministic rule-based guide takes over so the app is never empty.
+4. `src/lib/llm.ts`: engine setup for both paths. Model output is constrained to the schema (WebLLM `response_format`, Ollama `format`), then rendered from markdown (never injected as HTML).
+
+Note for Ollama: a page not served from `localhost` needs Ollama started with `OLLAMA_ORIGINS` set to the page's origin (or `*`).
 
 ## Design decisions (one line each)
 

@@ -73,12 +73,17 @@ export async function getEngine(
   return engine
 }
 
+/** True once the WebLLM engine is loaded, so the download confirmation is only asked once. */
+export function isEngineLoaded(): boolean {
+  return cachedEngine !== null
+}
+
 export interface ChatTurn {
   role: 'system' | 'user'
   content: string
 }
 
-export interface PlanFormat {
+export type PlanFormat = {
   type: 'json_object'
   schema: string
 }
@@ -96,4 +101,51 @@ export async function complete(
     ...(responseFormat ? { response_format: responseFormat } : {}),
   })
   return res.choices[0]?.message?.content ?? ''
+}
+
+/* ---------- Ollama ---------- */
+
+export const DEFAULT_OLLAMA_URL = 'http://localhost:11434'
+
+/**
+ * Gemma models already pulled on the user's machine. Read-only /api/tags call,
+ * so it is safe to run as soon as the user picks the Ollama engine.
+ */
+export async function listOllamaGemmaModels(baseUrl: string): Promise<string[]> {
+  const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/tags`)
+  if (!res.ok) throw new Error(`Ollama answered ${res.status}`)
+  const data = (await res.json()) as { models?: { name?: string }[] }
+  return (data.models ?? [])
+    .map((m) => m.name ?? '')
+    .filter((name) => /gemma/i.test(name))
+}
+
+/**
+ * Chat against the local Ollama server with Ollama's structured-output mode:
+ * `format` takes the JSON schema as an object, so the answer shape is
+ * guaranteed the same way WebLLM's response_format guarantees it.
+ */
+export async function completeViaOllama(
+  baseUrl: string,
+  model: string,
+  messages: ChatTurn[],
+  schema: Record<string, unknown>,
+): Promise<string> {
+  const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model,
+      messages,
+      format: schema,
+      stream: false,
+      options: { temperature: 0.6, top_p: 0.9 },
+    }),
+  })
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '')
+    throw new Error(`Ollama answered ${res.status}${detail ? `: ${detail.slice(0, 200)}` : ''}`)
+  }
+  const data = (await res.json()) as { message?: { content?: string } }
+  return data.message?.content ?? ''
 }

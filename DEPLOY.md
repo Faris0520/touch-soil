@@ -33,3 +33,13 @@ git push -u origin main
 ```
 
 Then update `[REPO_URL]` in `DEV_POST.md` and the GitHub embed.
+
+## Note about the Ollama engine on a deployed site
+
+Browsers block requests from a `https://` page to `http://localhost:11434` unless Ollama allows the origin. If you want visitors of the deployed site to use their own local Ollama, they must start it with:
+
+```bash
+OLLAMA_ORIGINS=https://your-app.onrender.com ollama serve
+```
+
+The in-browser (WebLLM) engine has no such requirement and works for everyone.

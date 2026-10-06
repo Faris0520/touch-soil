@@ -11,28 +11,30 @@ const SYSTEM_PROMPT = [
   'short sentences, no extra text.',
 ].join(' ')
 
-/** Grammar-constrained output: the model cannot emit anything but this shape. */
+/** Grammar-constrained shape: both engines must emit exactly this structure. */
+export const PLAN_SCHEMA: Record<string, unknown> = {
+  type: 'object',
+  properties: {
+    plants: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          why: { type: 'string' },
+        },
+        required: ['name', 'why'],
+      },
+    },
+    task: { type: 'string' },
+    skip: { type: 'string' },
+  },
+  required: ['plants', 'task', 'skip'],
+}
+
 export const PLAN_FORMAT: PlanFormat = {
   type: 'json_object',
-  schema: JSON.stringify({
-    type: 'object',
-    properties: {
-      plants: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            name: { type: 'string' },
-            why: { type: 'string' },
-          },
-          required: ['name', 'why'],
-        },
-      },
-      task: { type: 'string' },
-      skip: { type: 'string' },
-    },
-    required: ['plants', 'task', 'skip'],
-  }),
+  schema: JSON.stringify(PLAN_SCHEMA),
 }
 
 export interface WeeklyPlan {

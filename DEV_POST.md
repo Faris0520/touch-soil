@@ -38,10 +38,12 @@ The interesting files:
 
 The stack is deliberately boring: Vite, React, TypeScript, plain CSS. All the novelty is in how the AI piece works:
 
-- **The model runs in the browser.** I use [WebLLM](https://github.com/mlc-ai/web-llm), which runs open-weight models on your GPU through WebGPU. The app picks the smallest Gemma available in WebLLM's prebuilt list (Gemma 3 1B, quantized) and caches it after the first download.
-- **The model cannot break the format.** Small models love to ignore instructions, so instead of trusting prompts I use WebLLM's JSON mode with a schema: the model can only emit `{ plants: [{ name, why }], task, skip }`. The UI renders that structure itself. My first free-form version produced headings like "Plant now (3)" and a greeting, the constrained version cannot.
+- **You choose where the model runs.** A picker offers two engines for the same open-weight Gemma: downloaded into the browser (WebLLM), or an Ollama server on your own machine. The Ollama path only detects models you have already pulled; it never downloads anything by itself. This also gives browsers without WebGPU a real AI option.
+- **Heavy actions ask first.** Before the first browser download (about 1 GB) and before sending your garden details to the local Ollama server, a confirmation panel explains exactly what is about to happen.
+- **The model runs in the browser.** [WebLLM](https://github.com/mlc-ai/web-llm) runs open-weight models on your GPU through WebGPU. The app picks the smallest Gemma available in WebLLM's prebuilt list (Gemma 3 1B, quantized) and caches it after the first download.
+- **The model cannot break the format.** Small models love to ignore instructions, so instead of trusting prompts I constrain decoding: WebLLM gets a JSON schema via `response_format`, Ollama gets the same schema via its `format` parameter. The model can only emit `{ plants: [{ name, why }], task, skip }`, and the UI renders that structure itself. My first free-form version produced headings like "Plant now (3)" and a greeting, the constrained version cannot.
 - **The climate facts are plain data.** Frost-date planners assume USDA zones, which is unhelpful if your garden has a wet season instead of a winter. Touch Soil bundles a small table: four temperate bands, tropical lowland and highland (monsoon wet/dry seasons), arid, and Mediterranean. It is intentionally small and honest about being approximate, and it is a JSON file you can fork and correct for your region.
-- **There is a no-AI fallback.** If your browser has no WebGPU, or the model fails, a rule-based guide written from the same dataset takes over. The app is never empty.
+- **There is a no-AI fallback.** If neither engine can run, a rule-based guide written from the same dataset takes over. The app is never empty.
 
 One war story from the build: Gemma 3's prebuilt WebLLM record ships both a `context_window_size` override and a `sliding_window_size` base config, and the engine refuses to start with both active. The fix (the engine tells you this, to its credit) is switching the record to sliding-window mode with `attention_sink_size: 0`.
 
@@ -49,9 +51,9 @@ One war story from the build: Gemma 3's prebuilt WebLLM record ships both a `con
 
 For this project, the open pieces are not a detail, they are the whole argument:
 
-- **It works where the garden is.** No signal, no problem: once cached, the model runs offline. A closed API would make the app useless exactly when and where it should be most useful.
-- **Your garden stays yours.** What you grow, your zone, your questions: all of it stays in your browser. There is no server to trust because there is no server.
-- **You can swap the brain.** The model is one string in `src/lib/llm.ts`. Want a bigger Gemma, or a different open-weight model WebLLM supports? Change the filter. Want better climate data for your region? Edit a JSON table and open a pull request.
+- **It works where the garden is.** No signal, no problem: once cached, the in-browser model runs offline, and the Ollama engine only ever talks to your own machine. A closed API would make the app useless exactly when and where it should be most useful.
+- **Your garden stays yours.** What you grow, your zone, your questions: none of it reaches a cloud. The Ollama engine even shows a confirmation naming the exact server your details will go to, and the WebLLM engine shows one before its one-time download.
+- **You can swap the brain.** The model is one string in `src/lib/llm.ts`. Want a bigger Gemma, a different open-weight model WebLLM supports, or another local Ollama model? Change a filter or type a name. Want better climate data for your region? Edit a JSON table and open a pull request.
 - **It costs nothing to run.** No API bill per plan. The compute is the device you already own.
 
 ## My Agent Session

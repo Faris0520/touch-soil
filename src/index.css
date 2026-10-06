@@ -150,7 +150,8 @@ body {
 }
 
 select,
-textarea {
+textarea,
+.text-input {
   width: 100%;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -160,6 +161,11 @@ textarea {
   font-family: var(--font-ui);
   font-size: 14px;
   min-height: 44px;
+}
+
+.text-input {
+  font-family: var(--font-mono);
+  font-size: 13px;
 }
 
 select {
@@ -176,14 +182,112 @@ textarea {
 }
 
 select:hover,
-textarea:hover {
+textarea:hover,
+.text-input:hover {
   border-color: rgba(255, 255, 255, 0.16);
 }
 
 select:focus-visible,
-textarea:focus-visible {
+textarea:focus-visible,
+.text-input:focus-visible {
   outline: none;
   border-color: var(--color-mist);
+}
+
+/* ---------- Engine picker ---------- */
+
+.engine-picker {
+  border: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+
+.segmented {
+  display: inline-flex;
+  border: var(--hairline);
+  border-radius: var(--radius-control);
+  padding: 3px;
+  gap: 3px;
+  max-width: 100%;
+}
+
+.segment {
+  position: relative;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--color-fog);
+  cursor: pointer;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+
+.segment:hover {
+  color: var(--color-mist);
+}
+
+.segment:has(input:checked) {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-paper);
+}
+
+.segment input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.segment:has(input:focus-visible) {
+  outline: 2px solid var(--color-lime);
+  outline-offset: 2px;
+}
+
+/* ---------- Ollama section ---------- */
+
+.ollama-row {
+  border-top: var(--hairline);
+  padding-top: 16px;
+  margin-bottom: 16px;
+}
+
+.ollama-status {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-fog);
+  margin: 0 0 8px;
+  min-height: 1.4em;
+}
+
+/* ---------- Confirmation panel ---------- */
+
+.confirm-box {
+  background: var(--color-obsidian);
+  box-shadow: var(--inset-hairline);
+  border-radius: var(--radius-control);
+  padding: 14px;
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.confirm-box strong {
+  color: var(--color-paper);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.confirm-box p {
+  color: var(--color-mist);
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .actions {
