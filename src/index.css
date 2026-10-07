@@ -1,10 +1,27 @@
 /* Touch Soil: Linear-style dark theme per DESIGN.md (owner-supplied direction).
-   Dials: ENERGY 1 / RHYTHM 2 / MOTION 1: hover states only, one loading indicator,
-   no decorative motion. */
+   Dials: ENERGY 1 / RHYTHM 2 / MOTION 2: purposeful micro-interactions only
+   (panel reveals, plan arrival, press feedback), no decorative choreography.
+   Motion values reference the shared transitions.dev token scale. */
 
 :root {
   /* Native widgets (select popup, scrollbar) must follow the dark theme. */
   color-scheme: dark;
+
+  /* Motion tokens (transitions-polish scale) */
+  --duration-stagger: 40ms;
+  --duration-micro: 80ms;
+  --duration-quick: 150ms;
+  --duration-fast: 250ms;
+  --duration-medium: 350ms;
+  --duration-slow: 400ms;
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: ease-out;
+  --ease-linear: linear;
+  --distance-micro: 4px;
+  --distance-base: 8px;
+  --scale-large: 0.96;
+  --scale-medium: 0.97;
+  --blur-small: 2px;
 
   --color-void: #08090a;
   --color-carbon: #0f1011;
@@ -66,6 +83,41 @@ body {
   padding: 0 20px 64px;
 }
 
+/* ---------- Entrance motion (one-time, quiet) ---------- */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise, var(--distance-base)));
+    filter: blur(var(--blur-small));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: scale(var(--scale-medium));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* ---------- Nav ---------- */
 
 .nav {
@@ -106,6 +158,7 @@ body {
 
 .hero {
   margin: 72px 0 40px;
+  animation: rise-in var(--duration-slow) var(--ease-smooth-out) both;
 }
 
 .hero h1 {
@@ -132,6 +185,7 @@ body {
   border-radius: var(--radius-card);
   box-shadow: var(--inset-hairline);
   padding: 24px;
+  animation: rise-in var(--duration-slow) var(--ease-smooth-out) var(--duration-micro) both;
 }
 
 .field {
@@ -230,7 +284,8 @@ textarea:focus-visible,
   min-height: 36px;
   display: inline-flex;
   align-items: center;
-  transition: background-color 150ms ease-out, color 150ms ease-out;
+  transition: background-color var(--duration-quick) var(--ease-out),
+    color var(--duration-quick) var(--ease-out);
 }
 
 .segment:hover {
@@ -260,6 +315,8 @@ textarea:focus-visible,
   border-top: var(--hairline);
   padding-top: 16px;
   margin-bottom: 16px;
+  --rise: var(--distance-micro);
+  animation: rise-in var(--duration-fast) var(--ease-smooth-out) both;
 }
 
 .ollama-status {
@@ -279,6 +336,8 @@ textarea:focus-visible,
   padding: 14px;
   margin-top: 16px;
   font-size: 13px;
+  transform-origin: top center;
+  animation: panel-in var(--duration-fast) var(--ease-smooth-out);
 }
 
 .confirm-box strong {
@@ -312,8 +371,10 @@ textarea:focus-visible,
 button {
   font-family: var(--font-ui);
   cursor: pointer;
-  transition: background-color 150ms ease-out, border-color 150ms ease-out,
-    color 150ms ease-out, scale 100ms ease-out;
+  transition: background-color var(--duration-quick) var(--ease-out),
+    border-color var(--duration-quick) var(--ease-out),
+    color var(--duration-quick) var(--ease-out),
+    scale var(--duration-micro) var(--ease-out);
 }
 
 .btn-primary {
@@ -333,7 +394,7 @@ button {
 }
 
 .btn-primary:active:not(:disabled) {
-  scale: 0.96;
+  scale: var(--scale-large);
 }
 
 .btn-ghost {
@@ -352,7 +413,7 @@ button {
 }
 
 .btn-ghost:active {
-  scale: 0.96;
+  scale: var(--scale-large);
 }
 
 button:disabled {
@@ -376,7 +437,8 @@ button:disabled {
 .progress-fill {
   height: 100%;
   background: var(--color-lime);
-  transition: width 300ms ease-out;
+  /* Progress is loading feedback: linear keeps steady progress honest. */
+  transition: width 300ms var(--ease-linear);
 }
 
 .progress-text {
@@ -394,6 +456,7 @@ button:disabled {
   margin-top: 16px;
   font-size: 13px;
   color: var(--color-mist);
+  animation: fade-in var(--duration-quick) var(--ease-out);
 }
 
 .error-box strong {
@@ -410,6 +473,7 @@ button:disabled {
   box-shadow: var(--inset-hairline);
   padding: 24px;
   margin-top: 24px;
+  animation: rise-in var(--duration-slow) var(--ease-smooth-out) both;
 }
 
 .result-meta {
@@ -417,10 +481,6 @@ button:disabled {
   font-size: 12px;
   color: var(--color-fog);
   margin: 0 0 16px;
-}
-
-.result-body {
-  animation: fade-in 150ms ease-out;
 }
 
 .result-body h3 {
@@ -446,6 +506,7 @@ button:disabled {
   color: var(--color-mist);
   font-size: 15px;
   line-height: 1.6;
+  animation: rise-in var(--duration-fast) var(--ease-smooth-out) both;
 }
 
 .result-body p {
@@ -473,15 +534,6 @@ button:disabled {
 .local-note {
   font-size: 12px;
   color: var(--color-fog);
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 /* ---------- Footer ---------- */
@@ -527,10 +579,11 @@ button:disabled {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  button,
-  .progress-fill,
-  .result-body {
-    transition: none;
-    animation: none;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
