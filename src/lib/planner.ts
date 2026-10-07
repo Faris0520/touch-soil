@@ -49,12 +49,15 @@ export function parsePlan(raw: string): WeeklyPlan {
   if (!Array.isArray(plan.plants) || plan.plants.length === 0) {
     throw new Error('malformed plan')
   }
+  const clean = (s: unknown) =>
+    String(s ?? '').replace(/\s*[\u2013\u2014]\s*/g, ', ')
   return {
     plants: plan.plants
       .filter((p) => p && typeof p.name === 'string')
-      .slice(0, 5),
-    task: String(plan.task ?? ''),
-    skip: String(plan.skip ?? ''),
+      .slice(0, 5)
+      .map((p) => ({ name: clean(p.name), why: clean(p.why) })),
+    task: clean(plan.task),
+    skip: clean(plan.skip),
   }
 }
 

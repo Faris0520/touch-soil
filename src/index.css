@@ -3,6 +3,9 @@
    no decorative motion. */
 
 :root {
+  /* Native widgets (select popup, scrollbar) must follow the dark theme. */
+  color-scheme: dark;
+
   --color-void: #08090a;
   --color-carbon: #0f1011;
   --color-obsidian: #161718;
@@ -174,6 +177,12 @@ select {
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 34px;
+}
+
+/* Popup rows on engines that let options carry their own colors. */
+option {
+  background-color: var(--color-obsidian);
+  color: var(--color-mist);
 }
 
 textarea {
