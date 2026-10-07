@@ -2,8 +2,6 @@
 
 An offline garden planner: you pick your climate zone, and an open-weight **Gemma** model running **entirely in your browser** (via [WebLLM](https://github.com/mlc-ai/web-llm)) writes a "what to plant this week" plan. No server, no account, and your garden data never leaves your device.
 
-Built for the [Hacktoberfest Open-Source AI Challenge](https://dev.to/challenges/hacktoberfest-week1-2026-10-05), week 1: Touch Grass.
-
 ## Why open
 
 - **Runs with no internet** after the first model download: WebGPU inference in the browser, so it works at the garden, on a trail, or anywhere the signal doesn't.
@@ -34,3 +32,7 @@ A browser with **WebGPU** (Chrome/Edge 113+) is required for the AI part; the of
 ## Deploy
 
 The build is a static site: any static host works (Render, Netlify, GitHub Pages, Cloudflare Pages). No environment variables, no server.
+
+## Credit
+
+Built for the [Hacktoberfest Open-Source AI Challenge](https://dev.to/challenges/hacktoberfest-week1-2026-10-05), week 1: Touch Grass.
