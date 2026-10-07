@@ -19,6 +19,7 @@ import {
   listOllamaGemmaModels,
 } from './lib/llm'
 import { renderMarkdown } from './lib/markdown'
+import CoverScene from './components/CoverScene'
 
 type Phase = 'idle' | 'loading' | 'generating' | 'done' | 'error'
 type EngineChoice = 'webllm' | 'ollama'
@@ -298,6 +299,9 @@ export default function App() {
       </nav>
 
       <header className="hero">
+        <div className="cover">
+          <CoverScene />
+        </div>
         <h1>Know what to plant this week.</h1>
         <p>
           Touch Soil turns your climate zone into a weekly garden plan, written by an
