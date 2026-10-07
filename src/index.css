@@ -7,13 +7,13 @@
   /* Native widgets (select popup, scrollbar) must follow the dark theme. */
   color-scheme: dark;
 
-  /* Motion tokens (transitions-polish scale) */
-  --duration-stagger: 40ms;
-  --duration-micro: 80ms;
-  --duration-quick: 150ms;
-  --duration-fast: 250ms;
-  --duration-medium: 350ms;
-  --duration-slow: 400ms;
+  /* Motion tokens (transitions.dev scale, tuned ~30% slower at the owner's ask) */
+  --duration-stagger: 56ms;
+  --duration-micro: 100ms;
+  --duration-quick: 200ms;
+  --duration-fast: 320ms;
+  --duration-medium: 440ms;
+  --duration-slow: 500ms;
   --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out: ease-out;
   --ease-linear: linear;

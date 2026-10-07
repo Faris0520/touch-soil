@@ -17,7 +17,7 @@ export function renderMarkdown(src: string): ReactNode[] {
     out.push(
       <ul key={key++}>
         {list.map((item, i) => (
-          <li key={i} style={{ animationDelay: `${Math.min(i, 4) * 40}ms` }}>
+          <li key={i} style={{ animationDelay: `${Math.min(i, 4) * 56}ms` }}>
             {inline(item)}
           </li>
         ))}
