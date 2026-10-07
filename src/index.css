@@ -35,6 +35,15 @@
   --color-lime: #e4f222;
   --color-coral: #eb5757;
 
+  /* Component tokens (overridden per theme) */
+  --focus-ring: var(--color-lime);
+  --input-bg: rgba(255, 255, 255, 0.02);
+  --input-border: rgba(255, 255, 255, 0.08);
+  --input-border-hover: rgba(255, 255, 255, 0.16);
+  --chip-bg: rgba(255, 255, 255, 0.05);
+  --segment-active-bg: rgba(255, 255, 255, 0.06);
+  --ghost-hover-bg: rgba(255, 255, 255, 0.03);
+
   --font-ui: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 
@@ -46,8 +55,47 @@
   --inset-hairline: inset 0 0 0 1px var(--color-graphite);
 }
 
+/* Light theme: same system on a paper canvas. Activated by data-theme="light"
+   on <html>, set before first paint by an inline script in index.html. */
+[data-theme='light'] {
+  color-scheme: light;
+  --color-void: #fafafa;
+  --color-carbon: #ffffff;
+  --color-obsidian: #f4f4f5;
+  --color-graphite: #e3e4e6;
+  --color-smoke: #c9cbd0;
+  --color-ash: #6b7078;
+  --color-fog: #5f6368;
+  --color-mist: #383b3f;
+  --color-paper: #0d0e10;
+  --focus-ring: #0d0e10;
+  --input-bg: rgba(13, 14, 16, 0.03);
+  --input-border: rgba(13, 14, 16, 0.14);
+  --input-border-hover: rgba(13, 14, 16, 0.28);
+  --chip-bg: rgba(13, 14, 16, 0.05);
+  --segment-active-bg: rgba(13, 14, 16, 0.06);
+  --ghost-hover-bg: rgba(13, 14, 16, 0.04);
+}
+
 * {
   box-sizing: border-box;
+}
+
+/* Theme switches fade instead of snapping. */
+body,
+.panel,
+.result,
+.confirm-box,
+.error-box,
+.model-status,
+.segment,
+.progress-track,
+select,
+textarea,
+.text-input {
+  transition-property: background-color, border-color, color;
+  transition-duration: var(--duration-quick);
+  transition-timing-function: var(--ease-out);
 }
 
 html,
@@ -72,7 +120,7 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-lime);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -145,13 +193,46 @@ body {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--color-fog);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--chip-bg);
   border-radius: var(--radius-badge);
   padding: 4px 8px;
   max-width: 60vw;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ---------- Theme toggle ---------- */
+
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--color-graphite);
+  border-radius: var(--radius-control);
+  color: var(--color-fog);
+  padding: 0;
+}
+
+.theme-toggle:hover {
+  border-color: var(--color-smoke);
+  color: var(--color-mist);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+[data-theme='light'] .brand svg path {
+  fill: var(--color-paper);
+}
+
+[data-theme='light'] select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' fill='none' stroke='%235f6368' stroke-width='1.5'/%3E%3C/svg%3E");
 }
 
 /* ---------- Hero ---------- */
@@ -210,8 +291,8 @@ select,
 textarea,
 .text-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   color: var(--color-mist);
   border-radius: var(--radius-control);
   padding: 10px 12px;
@@ -247,7 +328,7 @@ textarea {
 select:hover,
 textarea:hover,
 .text-input:hover {
-  border-color: rgba(255, 255, 255, 0.16);
+  border-color: var(--input-border-hover);
 }
 
 select:focus-visible,
@@ -293,7 +374,7 @@ textarea:focus-visible,
 }
 
 .segment:has(input:checked) {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--segment-active-bg);
   color: var(--color-paper);
 }
 
@@ -379,7 +460,7 @@ button {
 
 .btn-primary {
   background: var(--color-lime);
-  color: var(--color-void);
+  color: #08090a;
   border: none;
   border-radius: var(--radius-control);
   padding: 10px 16px;
@@ -409,7 +490,7 @@ button {
 
 .btn-ghost:hover {
   border-color: var(--color-smoke);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--ghost-hover-bg);
 }
 
 .btn-ghost:active {

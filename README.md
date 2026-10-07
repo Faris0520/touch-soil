@@ -23,7 +23,7 @@ Note for Ollama: a page not served from `localhost` needs Ollama started with `O
 
 ## Design decisions (one line each)
 
-- Linear-style dark theme per the owner-supplied `DESIGN.md`: a calm tool that reads as a precision instrument, with one acid-lime accent reserved for the primary action.
+- Linear-style dark theme per the owner-supplied `DESIGN.md`: a calm tool that reads as a precision instrument, with one acid-lime accent reserved for the primary action. A light theme (same system on a paper canvas) is opt-in via the nav toggle, persisted in `localStorage`, and applied before first paint so nothing flashes.
 - Inter + JetBrains Mono per `DESIGN.md`; mono is used only for metadata (model status, week-of line).
 - Motion: quiet micro-interactions on one token scale (transitions.dev tokens live in `src/index.css`) — page arrival, panel reveals, the plan's entrance with a 40ms-per-item stagger, press feedback. No bounce, no scroll choreography, `prefers-reduced-motion` honored globally.
 - No em dashes anywhere in the product copy; plain sentences instead.

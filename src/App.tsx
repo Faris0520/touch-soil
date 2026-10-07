@@ -24,12 +24,36 @@ type Phase = 'idle' | 'loading' | 'generating' | 'done' | 'error'
 type EngineChoice = 'webllm' | 'ollama'
 type OllamaStatus = 'idle' | 'checking' | 'ok' | 'unreachable' | 'no-gemma'
 type PendingConfirm = 'webllm-download' | 'ollama-send' | null
+type Theme = 'dark' | 'light'
 
 const SproutGlyph = () => (
   <svg width="18" height="18" viewBox="0 0 32 32" aria-hidden="true">
     <path
       d="M16 27c0-7 0-10-8-15 0 9 3 13 8 15zm0 0c0-7 0-10 8-15 0 9-3 13-8 15z"
       fill="var(--color-lime)"
+    />
+  </svg>
+)
+
+const SunIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.5" />
+    <path
+      d="M8 1v1.5M8 13.5V15M15 8h-1.5M2.5 8H1M12.6 3.4l-1 1M4.4 11.6l-1 1M12.6 12.6l-1-1M4.4 4.4l-1-1"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+)
+
+const MoonIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <path
+      d="M13.5 9.5A6 6 0 0 1 6.5 2.5a6 6 0 1 0 7 7z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
     />
   </svg>
 )
@@ -55,6 +79,21 @@ export default function App() {
   const [ollamaStatus, setOllamaStatus] = useState<OllamaStatus>('idle')
   const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm>(null)
   const confirmButtonRef = useRef<HTMLButtonElement>(null)
+
+  const [theme, setTheme] = useState<Theme>(() =>
+    document.documentElement.dataset.theme === 'light' ? 'light' : 'dark',
+  )
+
+  function toggleTheme() {
+    const next: Theme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    document.documentElement.dataset.theme = next
+    try {
+      localStorage.setItem('theme', next)
+    } catch {
+      // Private browsing: the toggle still works, it just will not persist.
+    }
+  }
 
   useEffect(() => {
     if (pendingConfirm && confirmButtonRef.current) {
@@ -242,7 +281,20 @@ export default function App() {
           <SproutGlyph />
           Touch Soil
         </div>
-        <span className="model-status">{modelStatus}</span>
+        <div className="nav-right">
+          <span className="model-status">{modelStatus}</span>
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label={
+              theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+            }
+            title={theme === 'dark' ? 'Light theme' : 'Dark theme'}
+          >
+            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+          </button>
+        </div>
       </nav>
 
       <header className="hero">

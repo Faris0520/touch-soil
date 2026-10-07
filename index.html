@@ -3,6 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Apply the saved theme before first paint so there is no flash.
+      // Default is dark (the brand direction); "light" is opt-in.
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.dataset.theme = 'light'
+        }
+      } catch (e) {}
+    </script>
     <meta
       name="description"
       content="Touch Soil: an offline garden planner with an open-weight Gemma model running entirely in your browser."
