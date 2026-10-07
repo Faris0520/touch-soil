@@ -3,3 +3,4 @@ dist
 .zcode
 *.local
 .DS_Store
+/docs
