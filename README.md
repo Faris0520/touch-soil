@@ -1,5 +1,7 @@
 # Touch Soil
 
+<img width="1520" height="862" alt="image" src="https://github.com/user-attachments/assets/063d3d99-2376-401f-9058-dfb5ef6be3cd" />
+
 An offline garden planner: you pick your climate zone, and an open-weight **Gemma** model running **entirely in your browser** (via [WebLLM](https://github.com/mlc-ai/web-llm)) writes a "what to plant this week" plan. No server, no account, and your garden data never leaves your device.
 
 ## Why open
