@@ -37,4 +37,4 @@ The build is a static site: any static host works (Render, Netlify, GitHub Pages
 
 ## Credit
 
-Built for the [Hacktoberfest Open-Source AI Challenge](https://dev.to/challenges/hacktoberfest-week3-2026-10-19), week 3: Slow and Steady.
+Built for the [Hacktoberfest Open-Source AI Challenge](https://dev.to/challenges/hacktoberfest-week1-2026-10-05), week 1: Touch Grass.
